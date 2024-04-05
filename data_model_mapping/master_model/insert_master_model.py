@@ -2,7 +2,7 @@ import csv
 import psycopg2
 
 # Function to read the db connection info
-def read_db_connection_info(filename="../../db_connection_info.txt"):
+def read_db_connection_info(filename="../db_connection_info.txt"):
     connection_info = {}
     with open(filename, 'r') as file:
         for line in file:
@@ -48,7 +48,7 @@ def main(csv_filepath, connection_info):
         conn.close()  # Ensure the database connection is closed
 
 if __name__ == "__main__":
-    csv_filepath = 'master_model.csv'  # Path to your CSV file
+    csv_filepath = './master_model/master_model.csv'  # Path to your CSV file
     # Load the connection info
     connection_info = read_db_connection_info()
     main(csv_filepath, connection_info)
