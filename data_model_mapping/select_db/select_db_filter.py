@@ -28,13 +28,14 @@ try:
     )
     with conn:
         with conn.cursor() as cursor:
-            # SQL to select matched records
+            # SQL to select matched records, excluding where tag_description is NULL or 'NULL'
             query = """
             SELECT dm.*
             FROM data_mapping dm
             JOIN data_model_master dmm
             ON dm.thing ~ REPLACE(dmm.thing, '#', '\\d+')
-            AND dm.property ~ REPLACE(dmm.property, '#', '\\d+');
+            AND dm.property ~ REPLACE(dmm.property, '#', '\\d+')
+            WHERE dm.tag_description IS NOT NULL AND dm.tag_description <> 'NULL';
             """
             cursor.execute(query)
             results = cursor.fetchall()
