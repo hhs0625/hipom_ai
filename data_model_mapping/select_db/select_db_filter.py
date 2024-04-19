@@ -35,7 +35,8 @@ try:
             JOIN data_model_master dmm
             ON dm.thing ~ REPLACE(dmm.thing, '#', '\\d+')
             AND dm.property ~ REPLACE(dmm.property, '#', '\\d+')
-            WHERE dm.tag_description IS NOT NULL AND dm.tag_description <> 'NULL';
+            WHERE dm.tag_description IS NOT NULL AND dm.tag_description <> 'NULL'
+            AND dm.ships_idx BETWEEN 1000 AND 1999;
             """
             cursor.execute(query)
             results = cursor.fetchall()
