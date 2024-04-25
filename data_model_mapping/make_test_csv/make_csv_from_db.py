@@ -1,5 +1,5 @@
 import psycopg2
-import csv
+import pandas as pd
 
 def read_db_connection_info(filename):
     connection_info = {}
@@ -28,30 +28,42 @@ try:
     )
     with conn:
         with conn.cursor() as cursor:
-            # SQL to select matched records, excluding where tag_description is NULL or 'NULL'
-            query = """
+            # SQL to select matched records
+            query_data_mapping = """
             SELECT dm.*
             FROM data_mapping dm
             WHERE dm.ships_idx BETWEEN 1000 AND 1999;
             """
-            cursor.execute(query)
+            cursor.execute(query_data_mapping)
             results = cursor.fetchall()
+            column_names = [desc[0] for desc in cursor.description]
+            df = pd.DataFrame(results, columns=column_names)
 
-            # Define additional fields with default values or computation logic here
-            additional_fields = ['p_thing', 'p_property', 'score', 'correct', 'overlap']
-            default_values = ['', '', '', '', '']  # Example default values
+             # Set 'thing' and 'property' to "" if 'thing' value is $UNMAPPED
+            df.loc[df['thing'] == '$UNMAPPED', ['thing', 'property']] = ''
 
-            # Save results to CSV
-            with open('make_test_csv/test.csv', 'w', newline='') as f:
-                writer = csv.writer(f)
-                # Write headers based on the cursor description, extended with additional fields
-                headers = [desc[0] for desc in cursor.description] + additional_fields
-                writer.writerow(headers)
-                # Write data, extending each row with the additional fields
-                for row in results:
-                    extended_row = list(row) + default_values
-                    writer.writerow(extended_row)
-            print("Data exported successfully to 'test.csv'")
+            # Query to get patterns from data_model_master
+            query_patterns = """
+            SELECT thing, property
+            FROM data_model_master;
+            """
+            cursor.execute(query_patterns)
+            patterns = cursor.fetchall()
+            patterns_df = pd.DataFrame(patterns, columns=['thing', 'property'])
+            patterns_df['pattern'] = patterns_df['thing'] + "@" + patterns_df['property']
+            # Add additional fields with default values
+            additional_fields = {
+                'p_thing': '', 'p_property': '', 'p_thing_correct': '',
+                'p_property_correct': '', 'MDM': 'FALSE'
+            }
+            for field in additional_fields:
+                df[field] = additional_fields[field]
+
+            df['pattern'] = df['thing'].str.replace('\d+', '#', regex=True) + "@" + df['property'].str.replace('\d+', '#', regex=True)
+            df['MDM'] = df['pattern'].isin(patterns_df['pattern']).replace({True: 'TRUE', False: 'FALSE'})
+
+            df.to_excel('make_test_csv/test.xlsx', index=False)
+            print("Data exported successfully to 'test.xlsx'")
 
 except (Exception, psycopg2.DatabaseError) as error:
     print(f"An error occurred: {error}")
