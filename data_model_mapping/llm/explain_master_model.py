@@ -14,7 +14,7 @@ df = pd.read_csv(csv_path)
 def call_bedrock_api(explain_request):
     body = {
         "prompt": (
-            f"Human: I am reading ship's io list. Explain '{explain_request}' by 1 line.\n\nAssistant:\n"
+            f"Human: I am reading ship's io list. Explain '{explain_request}' by 1 line. don't repeat it, just say what it is.\n\nAssistant:\n"
         ),
         "max_tokens_to_sample": 2048,
         "temperature": 0.5,
@@ -47,13 +47,17 @@ total_rows = len(df)
 completed_rows = 0
 
 for index, row in df.iterrows():
-    explain_request = row['tag_description']
+    explain_request = {
+        "thing": row['thing'],
+        "property": row['property'],
+        "tag_description": row['tag_description']
+    }
     response = call_bedrock_api(explain_request)
     if response:
         df.at[index, 'desc'] = response
         completed_rows += 1
         print(f"Row {index} updated")
-        print(f"Request: {explain_request}")
+        print(f"Request: {json.dumps(explain_request)}")
         print(f"Response: {response}")
         print(f"Completed {completed_rows} out of {total_rows}\n")
 

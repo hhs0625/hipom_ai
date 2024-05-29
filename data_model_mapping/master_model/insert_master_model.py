@@ -30,12 +30,19 @@ def main(csv_filepath, connection_info):
     )
     cursor = conn.cursor()
 
-    # Read data from the CSV file
-    data = read_data_from_csv(csv_filepath)
-
-    insert_query = """INSERT INTO data_model_master (thing, property, ships_count) 
-                      VALUES (%s, %s, %s);"""
     try:
+        # Delete existing data in the table
+        delete_query = "DELETE FROM data_model_master;"
+        cursor.execute(delete_query)
+        conn.commit()
+        print("Existing data was deleted.")
+
+        # Read data from the CSV file
+        data = read_data_from_csv(csv_filepath)
+
+        insert_query = """INSERT INTO data_model_master (thing, property, ships_count) 
+                          VALUES (%s, %s, %s);"""
+
         # Insert data into the database
         cursor.executemany(insert_query, data)
         conn.commit()

@@ -10,7 +10,7 @@ explain_request = 'NO.1 G/E H.T WATER OUTLET TEMP'
 # Define the body for the inference configuration
 body = {
     "prompt": (
-        f"Human: I am reading ship's io list. Explain '{explain_request}' by 1 line.\n\nAssistant:\n"
+        f"Human: I am reading ship's io list. Explain '{explain_request}' by 1 line. don't repeat it, just say what it is.\n\nAssistant:\n"
     ),
     "max_tokens_to_sample": 2048,
     "temperature": 0.5,

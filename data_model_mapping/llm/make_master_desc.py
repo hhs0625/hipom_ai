@@ -38,6 +38,16 @@ try:
     # Replace '#' with '1' in the DataFrame
     df = df.replace('#', '1', regex=True)
     
+    # List of properties that require '1' to be replaced with '2'
+    special_properties = [
+        'CurrentA', 'CurrentB', 'FrequencyA', 'FrequencyB', 
+        'VoltageA', 'VoltageB', 'GenPowerA', 'GenPowerB'
+    ]
+    
+    # Replace '1' with '2' for specific properties
+    for prop in special_properties:
+        df.loc[df['property'] == prop, 'thing'] = df.loc[df['property'] == prop, 'thing'].str.replace('1', '2')
+    
     # Add a new column for tag_description
     df['tag_description'] = None
 
