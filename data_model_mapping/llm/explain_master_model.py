@@ -14,7 +14,7 @@ df = pd.read_csv(csv_path)
 def call_bedrock_api(explain_request):
     body = {
         "prompt": (
-            f"Human: I am reading ship's io list. Explain '{explain_request}' by 1 line. don't repeat it, just say what it is.\n\nAssistant:\n"
+            f"Human: I am reading ship's io list. Explain '{explain_request}' by 1 line. don't repeat tag_description or tag, just say tag_description's meaning.\n\nAssistant:\n"
         ),
         "max_tokens_to_sample": 2048,
         "temperature": 0.5,
