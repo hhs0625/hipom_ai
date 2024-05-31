@@ -2,6 +2,7 @@
 # import data and load dataset
 from datasets import load_from_disk
 # Path to saved combined_dataset
+# file_path = 'combined_data_reference'
 file_path = 'combined_data'
 split_datasets = load_from_disk(file_path)
 
@@ -9,7 +10,7 @@ split_datasets = load_from_disk(file_path)
 from transformers import AutoTokenizer
 tokenizer = AutoTokenizer.from_pretrained("t5-base", return_tensors="pt")
 # Define additional special tokens
-additional_special_tokens = ["<THING_START>", "<THING_END>", "<PROPERTY_START>", "<PROPERTY_END>"]
+additional_special_tokens = ["<THING_START>", "<THING_END>", "<PROPERTY_START>", "<PROPERTY_END>", "<attn>"]
 # Add the additional special tokens to the tokenizer
 tokenizer.add_special_tokens({"additional_special_tokens": additional_special_tokens})
 
@@ -68,7 +69,8 @@ os.environ['NCCL_P2P_DISABLE'] = '1'
 os.environ['NCCL_IB_DISABLE'] = '1'
 
 args = Seq2SeqTrainingArguments(
-    f"train_tp_checkpoint_40",
+    # f"checkpoint_reference_20",
+    f"checkpoint_attention_token_40",
     evaluation_strategy="no",
     # logging_dir="tensorboard-log",
     # logging_strategy="epoch",
