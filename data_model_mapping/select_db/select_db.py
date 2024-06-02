@@ -1,7 +1,8 @@
 import psycopg2
+import pandas as pd
 
 # Function to read the db connection info
-def read_db_connection_info(filename="../../db_connection_info.txt"):
+def read_db_connection_info(filename="../db_connection_info.txt"):
     connection_info = {}
     try:
         with open(filename, 'r') as file:
@@ -28,17 +29,26 @@ try:
     # This ensures that resources are cleaned up properly
     with conn:
         with conn.cursor() as cursor:
-            # SQL to copy the entire data_mapping table to a CSV file
-            query = "COPY data_mapping TO STDOUT WITH CSV HEADER"
-            # Path and name of the CSV file where the data will be saved
-            with open('data_mapping.csv', 'w') as f:
-                cursor.copy_expert(query, f)
+            # SQL query to select data with ships_idx between 1000 and 1999
+            query = """
+                SELECT * FROM data_mapping
+                WHERE ships_idx BETWEEN 1000 AND 1999
+            """
+            # Execute the query
+            cursor.execute(query)
+            # Fetch all the results
+            results = cursor.fetchall()
+            # Get column names
+            columns = [desc[0] for desc in cursor.description]
+            # Create a DataFrame from the results
+            df = pd.DataFrame(results, columns=columns)
+            # Save the DataFrame to a CSV file
+            df.to_csv('select_db/data_mapping.csv', index=False)
 
-    print("Data exported successfully to 'data_mapping.csv'")
+    print("Data exported successfully to 'select_db/data_mapping.csv'")
 
 except (Exception, psycopg2.DatabaseError) as error:
     print(f"An error occurred: {error}")
 finally:
     if conn is not None:
         conn.close()
-

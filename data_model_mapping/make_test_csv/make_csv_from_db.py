@@ -39,7 +39,7 @@ try:
             column_names = [desc[0] for desc in cursor.description]
             df = pd.DataFrame(results, columns=column_names)
 
-             # Set 'thing' and 'property' to "" if 'thing' value is $UNMAPPED
+            # Set 'thing' and 'property' to "" if 'thing' value is $UNMAPPED
             df.loc[df['thing'] == '$UNMAPPED', ['thing', 'property']] = ''
 
             # Query to get patterns from data_model_master
@@ -62,8 +62,13 @@ try:
             df['pattern'] = df['thing'].str.replace('\d+', '#', regex=True) + "@" + df['property'].str.replace('\d+', '#', regex=True)
             df['MDM'] = df['pattern'].isin(patterns_df['pattern']).replace({True: 'TRUE', False: 'FALSE'})
 
-            df.to_excel('make_test_csv/test.xlsx', index=False)
-            print("Data exported successfully to 'test.xlsx'")
+            # Remove 'unit' column if it exists
+            if 'unit' in df.columns:
+                df.drop(columns=['unit'], inplace=True)
+
+            # Save DataFrame to CSV
+            df.to_csv('make_test_csv/test.csv', index=False)
+            print("Data exported successfully to 'test.csv'")
 
 except (Exception, psycopg2.DatabaseError) as error:
     print(f"An error occurred: {error}")
