@@ -50,7 +50,7 @@ try:
             cursor.execute(query_patterns)
             patterns = cursor.fetchall()
             patterns_df = pd.DataFrame(patterns, columns=['thing', 'property'])
-            patterns_df['pattern'] = patterns_df['thing'] + "@" + patterns_df['property']
+            patterns_df['pattern'] = patterns_df['thing'] + " " + patterns_df['property']
             # Add additional fields with default values
             additional_fields = {
                 'p_thing': '', 'p_property': '', 'p_thing_correct': '',
@@ -59,7 +59,7 @@ try:
             for field in additional_fields:
                 df[field] = additional_fields[field]
 
-            df['pattern'] = df['thing'].str.replace('\d+', '#', regex=True) + "@" + df['property'].str.replace('\d+', '#', regex=True)
+            df['pattern'] = df['thing'].str.replace('\d+', '#', regex=True) + " " + df['property'].str.replace('\d+', '#', regex=True)
             df['MDM'] = df['pattern'].isin(patterns_df['pattern']).replace({True: 'TRUE', False: 'FALSE'})
 
             # Remove 'unit' column if it exists

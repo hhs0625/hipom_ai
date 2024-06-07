@@ -15,7 +15,7 @@ def read_data_from_csv(csv_filepath):
     with open(csv_filepath, newline='') as csvfile:
         reader = csv.reader(csvfile)
         next(reader)  # Skip the header row
-        data = [tuple(row) for row in reader]  # Convert each row to a tuple
+        data = [tuple(row[:4]) for row in reader]  # Only take the first 4 columns
     return data
 
 # Main function to read CSV and insert data into the database
@@ -40,8 +40,8 @@ def main(csv_filepath, connection_info):
         # Read data from the CSV file
         data = read_data_from_csv(csv_filepath)
 
-        insert_query = """INSERT INTO data_model_master (thing, property, ships_count) 
-                          VALUES (%s, %s, %s);"""
+        insert_query = """INSERT INTO data_model_master (thing, property, ships_count, data_desc) 
+                          VALUES (%s, %s, %s, %s);"""
 
         # Insert data into the database
         cursor.executemany(insert_query, data)
@@ -55,7 +55,7 @@ def main(csv_filepath, connection_info):
         conn.close()  # Ensure the database connection is closed
 
 if __name__ == "__main__":
-    csv_filepath = './master_model/master_model.csv'  # Path to your CSV file
+    csv_filepath = 'master_model/data_model_master_export_updated.csv'  # Path to your CSV file
     # Load the connection info
     connection_info = read_db_connection_info()
     main(csv_filepath, connection_info)
