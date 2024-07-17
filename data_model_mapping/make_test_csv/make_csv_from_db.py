@@ -62,9 +62,6 @@ try:
             df['pattern'] = df['thing'].str.replace('\d+', '#', regex=True) + " " + df['property'].str.replace('\d+', '#', regex=True)
             df['MDM'] = df['pattern'].isin(patterns_df['pattern']).replace({True: 'TRUE', False: 'FALSE'})
 
-            # Remove 'unit' column if it exists
-            if 'unit' in df.columns:
-                df.drop(columns=['unit'], inplace=True)
 
             # Save DataFrame to CSV
             df.to_csv('make_test_csv/test.csv', index=False)

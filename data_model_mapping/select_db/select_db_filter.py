@@ -26,9 +26,6 @@ def replace_placeholders(data_desc, num_1, num_2):
 data_mapping_file_path = 'select_db/data_mapping.csv'  # Adjust this path to your actual file location
 data_mapping = pd.read_csv(data_mapping_file_path, dtype=str)
 
-# Remove the 'unit' column if it exists
-if 'unit' in data_mapping.columns:
-    data_mapping = data_mapping.drop(columns=['unit'])
 
 # Add 'thing_property' field
 data_mapping['thing_property'] = data_mapping['thing'] + data_mapping['property']
