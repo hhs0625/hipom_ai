@@ -43,7 +43,7 @@ try:
             # Create a DataFrame from the results
             df = pd.DataFrame(results, columns=columns)
             # Save the DataFrame to a CSV file
-            df.to_csv('select_db/data_mapping.csv', index=False)
+            df.to_csv('select_db/data_mapping.csv', index=False, encoding='utf-8-sig')
 
     print("Data exported successfully to 'select_db/data_mapping.csv'")
 

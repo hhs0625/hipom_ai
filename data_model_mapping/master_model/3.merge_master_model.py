@@ -40,4 +40,21 @@ if new_rows:
 # Save the updated data to a new CSV file
 data_model_master_export.to_csv('master_model/data_model_master_export_updated.csv', index=False)
 
+# Find rows in data_model_master_export that are not in master_model
+not_in_master_model = data_model_master_export.merge(master_model[['thing', 'property']], on=['thing', 'property'], how='left', indicator=True)
+not_in_master_model = not_in_master_model[not_in_master_model['_merge'] == 'left_only']
+not_in_master_model = not_in_master_model.drop(columns=['_merge'])
+
+# Find rows in master_model that are not in data_model_master_export
+not_in_data_model_master_export = master_model.merge(data_model_master_export[['thing', 'property']], on=['thing', 'property'], how='left', indicator=True)
+not_in_data_model_master_export = not_in_data_model_master_export[not_in_data_model_master_export['_merge'] == 'left_only']
+not_in_data_model_master_export = not_in_data_model_master_export.drop(columns=['_merge'])
+
+# Print the results
+print("Rows in data_model_master_export but not in master_model:")
+print(not_in_master_model)
+
+print("\nRows in master_model but not in data_model_master_export:")
+print(not_in_data_model_master_export)
+
 print("Task completed. The updated file has been saved as 'master_model/data_model_master_export_updated.csv'.")
